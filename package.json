@@ -1,0 +1,27 @@
+{
+  "name": "bot",
+  "version": "1.0.0",
+  "description": "bot in telegram for information of bitcoins",
+  "main": "bot.js",
+  "dependencies": {
+    "axios": "^0.21.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.3",
+    "mongoose": "^5.11.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node bot.js " 
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jeaquino/bot.git"
+  },
+  "author": "Jeaquino",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jeaquino/bot/issues"
+  },
+  "homepage": "https://github.com/Jeaquino/bot#readme"
+}
