@@ -138,4 +138,16 @@ app.get("/usuarios", async (req, res) => {
     });
 })
 
+app.get("/usuarios/:pais", async (req, res) => {
+    await client.connect();
+
+    var filtro = req.paramas.pais
+    const database = client.db("criptomoneda");
+    const collection = database.collection("usuarios");
+    const personas = await collection.find({pais:filtro}).toArray()
+    res.json({
+        personas: personas
+    });
+})
+
 app.listen(process.env.PORT || 3001);

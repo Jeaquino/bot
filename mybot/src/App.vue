@@ -1,16 +1,22 @@
 
 <template>
-<div id="app">
-  <Title :titulo="'TibBot Encripto monedas!'" />
-  <nav class="navbar navbar-light bg-light">
-  <span class="navbar-brand mb-0 h1">XYZ Encriptomendas</span>
-  </nav>
+  <div id="app">
+    <Title :titulo="'TibBot Encripto monedas!'" />
+    <nav class="navbar navbar-light bg-light">
+      <span class="navbar-brand mb-0 h1">XYZ Encriptomendas</span>
+    </nav>
+
+    <select v-model="pais" name="" id="">
+      <option value="Argentina">Argentina</option>
+      <option value="España">España</option>
+      <option value="Venezuela">Venezuela</option>
+    </select>
 
     <table class="table" v-if="datos.length > 0">
       <thead>
         <tr>
           <th scope="col">Id</th>
-          <th scope="col">Titulo</th>
+          <th scope="col">Nombre</th>
           <th scope="col">Contenido</th>
         </tr>
       </thead>
@@ -28,26 +34,30 @@
     <div v-else>
       <p>No hay datos disponibles para mostrar.</p>
     </div>
-
   </div>
 </template>
 
 <script>
-
-import axios from 'axios'
+import axios from "axios";
 
 export default {
   name: "App",
 
-  components: {
-  },
+  components: {},
 
   data() {
     return {
       //mostrar: false,
       //edad: 0,
       datos: [],
+      pais: null,
     };
+  },
+
+  watch: {
+    pais() {
+      this.getData();
+    },
   },
 
   created() {
@@ -55,22 +65,34 @@ export default {
   },
 
   mounted() {
-    console.log(this.datos);
+    console.log(this.pais);
     this.getData();
   },
 
   //  Vue devtools
   methods: {
     getData() {
-      const url = "https://app-tibbot.herokuapp.com/usuarios";
+      let url = "https://app-tibbot.herokuapp.com/usuarios";
 
-      axios
-        .get(url)
-        .then((res) => {
-          this.datos = res.data;
-          console.log(res.data);
-        })
-        .catch((error) => console.log(error));
+      if (this.pais == null) {
+        axios
+          .get(url)
+          .then((res) => {
+            this.datos = res.data.personas;
+            console.log(res.data);
+          })
+          .catch((error) => console.log(error));
+      } else {
+        url = `https://app-tibbot.herokuapp.com/usuarios/${this.pais}`;
+
+        axios
+          .get(url)
+          .then((res) => {
+            this.datos = res.data.personas;
+            console.log(res.data);
+          })
+          .catch((error) => console.log(error));
+      }
     },
   },
 };
