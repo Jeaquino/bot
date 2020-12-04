@@ -1,36 +1,36 @@
 const express = require("express")
 const axios = require("axios")
-const {
-    MongoClient
-} = require("mongodb")
 const app = express();
-
 app.use(express.json());
 
-const mongoUrl = "mongodb://127.0.0.1:27017";
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://Jeaquino:Maiten22@cluster0.jemj5.mongodb.net/criptomoneda?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
-const client = new MongoClient(mongoUrl);
+const mongoUrl = "mongodb+srv://Jeaquino:Maiten22@cluster0.jemj5.mongodb.net/criptomoneda?retryWrites=true&w=majority";
+
 
 app.post("/", async (req, res) => {
     await client.connect();
 
-    const database = client.db("criptomoneda");
+    const database = client.db("criptomoneda")
     const collection = database.collection("usuarios");
+
     let numero = 0
     let persona = ""
 
     const action = req.body.queryResult.action;
+    const datos = req.body.originalDetectIntentRequest.payload.data.from
+    console.log(datos.id)
     switch (action) {
         case "bienvenida":
-            numero = req.body.queryResult.parameters.number;
             persona = await collection.find({
-                id: numero
+                id: datos.id
             }).toArray();
-            console.log(persona)
-            if (persona[0].nombre != undefined) {
+            if (persona[0] != undefined) {
                 res.json({
-                    fulfillmentText: `Bienvenido ${persona[0].nombre}!
-                    Por favor indique que cotización de criptomoneda desea saber
+                    fulfillmentText: `Bienvenido ${persona[0].nombre}! 
+Por favor indique que cotización de criptomoneda desea saber
                     1- Bitcoin
                     2- Ethereum 
                     3- Monero
@@ -38,33 +38,33 @@ app.post("/", async (req, res) => {
                 });
             } else {
                 res.json({
-                    fulfillmentText: `No se encuentra registrado, para acceder a nuestro servicio debe registrarse.
-                    Desea realizar el registro? (S/N)`
+                    fulfillmentText: `Hola ${datos.first_name}, no se encuentra registrad@. Para acceder a nuestro servicio debe registrarse.
+
+Desea realizar el registro? (S/N)`
                 });
             }
             break;
 
         case "Registro.Registro-yes":
-            numero = req.body.queryResult.parameters.numero
             persona = req.body.queryResult.parameters;
-            console.log(numero)
-            const usuario = await collection.find({id: numero}).toArray()
-            console.log(usuario)
-            if (usuario[0].id != undefined) {
-                res.json({
-                    fulfillmentText: `${persona.nombre}, el número ${persona.numero} ya se encuentra registrado, por favor intente nuevamente`
-                })
-            } else {
-                const result = await collection.insertOne(persona);
-                res.json({
-                    fulfillmentText: `Guardado con exito ${persona.nombre}!!
-                    Por favor indique que cotización de criptomoneda desea saber:
+            const result = await collection.insertOne({
+                id: datos.id,
+                nombre: persona.nombre,
+                dni: persona.dni,
+                ciudad: persona.ciudad,
+                pais: persona.pais,
+                mail: persona.mail,
+                date: new Date()
+            });
+            res.json({
+                fulfillmentText: `Guardado con exito ${persona.nombre}!!
+Por favor indique que cotización de criptomoneda desea saber:
                     1- Bitcoin
                     2- Ethereum 
                     3- Monero
                     4- Todas`
-                });
-            }
+            });
+
             break;
 
         case "bitcoin":
@@ -78,7 +78,7 @@ app.post("/", async (req, res) => {
         case "ethereum":
             axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=ars`).then(respuesta => {
                 res.json({
-                    fulfillmentText: `El valor actual de Bitcoint en pesos Argentinos es de $ ${respuesta.data.ethereum.ars}!`
+                    fulfillmentText: `El valor actual de Ethereum en pesos Argentinos es de $ ${respuesta.data.ethereum.ars}!`
                 })
             });
             break;
@@ -86,7 +86,7 @@ app.post("/", async (req, res) => {
         case "monero":
             axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=monero&vs_currencies=ars`).then(respuesta => {
                 res.json({
-                    fulfillmentText: `El valor actual de Bitcoint en pesos Argentinos es de $ ${respuesta.data.monero.ars}!`
+                    fulfillmentText: `El valor actual de Monero en pesos Argentinos es de $ ${respuesta.data.monero.ars}!`
                 })
             });
             break;
@@ -115,27 +115,17 @@ app.post("/", async (req, res) => {
             });
             break
     }
-
-
-
-    /*const {numero1, numero2} = req.body.queryResult.parameters;
-        const resultado = numero1 + numero2;
-        res.json({
-            fulfillmentText: `El resultado de la suma es ${resultado}`
-        })
-    */
 });
 
-app.get("/datos", async (req, res) => {
+app.get("/usuarios", async (req, res) => {
     await client.connect();
 
     const database = client.db("criptomoneda");
     const collection = database.collection("usuarios");
     const personas = await collection.find({}).toArray();
-    console.log(personas);
     res.json({
         personas: personas
     });
 })
 
-app.listen(8080);
+app.listen(3001);
