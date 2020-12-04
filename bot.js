@@ -141,7 +141,7 @@ app.get("/usuarios", async (req, res) => {
 app.get("/usuarios/:pais", async (req, res) => {
     await client.connect();
 
-    var filtro = req.paramas.pais
+    var filtro = req.params.pais
     const database = client.db("criptomoneda");
     const collection = database.collection("usuarios");
     const personas = await collection.find({pais:filtro}).toArray()
