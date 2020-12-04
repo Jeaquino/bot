@@ -2,30 +2,35 @@
 <template>
   <div id="app">
     <Title :titulo="'TibBot Encripto monedas!'" />
-    <nav class="navbar navbar-light bg-light">
+    <nav class="navbar navbar-dark bg-primary">
       <span class="navbar-brand mb-0 h1">XYZ Encriptomendas</span>
-    </nav>
-
-    <select v-model="pais" name="" id="">
+      <select v-model="pais" name="" id="" class="mt-3 mb-3 custom-select custom-select-lg mb-3">
       <option value="Argentina">Argentina</option>
       <option value="España">España</option>
       <option value="Venezuela">Venezuela</option>
     </select>
+    </nav>
 
-    <table class="table" v-if="datos.length > 0">
+    <table class="table table-striped table-dark" v-if="datos.length > 0">
       <thead>
         <tr>
           <th scope="col">Id</th>
           <th scope="col">Nombre</th>
-          <th scope="col">Contenido</th>
+          <th scope="col">Dni</th>
+          <th scope="col">Ciudad</th>
+          <th scope="col">Pais</th>
+          <th scope="col">Email</th>
         </tr>
       </thead>
 
       <tbody>
         <tr v-for="(dato, index) in datos" :key="index">
           <td>{{ dato.id }}</td>
-          <td>{{ dato.title }}</td>
-          <td>{{ dato.body }}</td>
+          <td>{{ dato.nombre }}</td>
+          <td>{{ dato.dni }}</td>
+          <td>{{ dato.ciudad }}</td>
+          <td>{{ dato.pais }}</td>
+          <td>{{ dato.mail }}</td>
         </tr>
       </tbody>
     </table>
